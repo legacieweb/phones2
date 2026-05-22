@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Filter, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import api from '../../api';
 import toast from 'react-hot-toast';
 import type { Order } from '../../types';
 
@@ -12,7 +12,7 @@ export default function OrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/orders');
+      const response = await api.get('/api/admin/orders');
       setOrders(response.data);
     } catch (error) {
       console.error('Failed to fetch orders:', error);
@@ -37,7 +37,7 @@ export default function OrdersPage() {
 
   const updateOrderStatus = async (id: string, status: string) => {
     try {
-      await axios.patch(`http://localhost:5000/api/admin/orders/${id}/status`, { status });
+      await api.patch(`/api/admin/orders/${id}/status`, { status });
       toast.success('Order status updated');
       fetchOrders();
     } catch (error) {

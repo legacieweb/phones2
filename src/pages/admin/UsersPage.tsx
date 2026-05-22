@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Loader2, UserMinus, UserCheck, Trash2 } from 'lucide-react';
-import axios from 'axios';
+import api from '../../api';
 import toast from 'react-hot-toast';
 
 interface User {
@@ -20,7 +20,7 @@ export default function UsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/users');
+      const response = await api.get('/api/admin/users');
       setUsers(response.data);
     } catch (error) {
       console.error('Failed to fetch users:', error);
@@ -37,7 +37,7 @@ export default function UsersPage() {
   const toggleUserStatus = async (id: string, currentStatus: string) => {
     const newStatus = currentStatus === 'active' ? 'suspended' : 'active';
     try {
-      await axios.patch(`http://localhost:5000/api/admin/users/${id}/status`, { status: newStatus });
+      await api.patch(`/api/admin/users/${id}/status`, { status: newStatus });
       toast.success(`User ${newStatus === 'active' ? 'activated' : 'suspended'}`);
       fetchUsers();
     } catch (error) {
@@ -49,7 +49,7 @@ export default function UsersPage() {
   const deleteUser = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/admin/users/${id}`);
+      await api.delete(`/api/admin/users/${id}`);
       toast.success('User deleted');
       fetchUsers();
     } catch (error: any) {

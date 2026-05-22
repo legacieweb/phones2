@@ -1,11 +1,28 @@
 import { useState, useEffect } from 'react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { Loader2 } from 'lucide-react';
-import axios from 'axios';
-import { mockProducts } from '../../data/mockData';
+import api from '../../api';
+
+interface CategoryData {
+  name: string;
+  value: number;
+}
+
+interface MonthlyRevenue {
+  name: string;
+  revenue: number;
+}
+
+interface Stats {
+  totalOrders: number;
+  totalRevenue: number;
+  totalUsers: number;
+  monthlyRevenue: MonthlyRevenue[];
+  categoryDistribution: CategoryData[];
+}
 
 export default function AnalyticsPage() {
-  const [stats, setStats] = useState({ 
+  const [stats, setStats] = useState<Stats>({ 
     totalOrders: 0, 
     totalRevenue: 0, 
     totalUsers: 0,
@@ -17,7 +34,7 @@ export default function AnalyticsPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/stats');
+        const response = await api.get('/api/admin/stats');
         setStats(response.data);
       } catch (error) {
         console.error('Failed to fetch analytics stats:', error);
@@ -107,7 +124,7 @@ export default function AnalyticsPage() {
                 dataKey="value"
               >
                 {(stats.categoryDistribution || []).map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} cornerRadius={8} />
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip 

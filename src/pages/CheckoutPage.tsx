@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CreditCard, Loader2, CheckCircle, Package, ArrowRight } from 'lucide-react';
-import axios from 'axios';
+import api from '../api';
 import { useCartStore, useUserStore } from '../store';
 
 declare global {
@@ -40,7 +40,7 @@ export default function CheckoutPage() {
     if (items.length === 0) return;
 
     try {
-      const response = await axios.post('http://localhost:5000/api/paystack/initialize', {
+      const response = await api.post('/api/paystack/initialize', {
         email: customerInfo.email,
         amount: getTotal(),
         metadata: {
@@ -62,7 +62,7 @@ export default function CheckoutPage() {
         },
         callback: (response: { reference: string }) => {
           setIsProcessing(true);
-          axios.post('http://localhost:5000/api/orders', {
+          api.post('/api/orders', {
             reference: response.reference,
             orderData: {
               customer: customerInfo,

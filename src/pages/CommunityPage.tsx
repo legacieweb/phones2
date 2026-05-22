@@ -58,7 +58,7 @@ export default function CommunityPage() {
 
     setLoading(planId);
     try {
-      const response = await axios.post('http://localhost:5000/api/paystack/initialize', {
+      const response = await api.post('/api/paystack/initialize', {
         email: user?.email,
         amount: amount,
         metadata: {
@@ -77,7 +77,7 @@ export default function CommunityPage() {
         ref: data.reference,
         callback: async () => {
           try {
-            await axios.post(`http://localhost:5000/api/users/${user?.email}/premium`, {
+            await api.post(`/api/users/${user?.email}/premium`, {
               isPremium: true
             });
             toast.success('Welcome to the inner circle! Subscription confirmed.');

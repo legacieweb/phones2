@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ElementType } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { ShoppingBag, Package, CreditCard, User, Clock, Settings, Heart, LogOut, LayoutDashboard, Users, Banknote, Trash2 } from 'lucide-react';
 import { useUserStore, useWishlistStore, useCartStore } from '../store';
 import { useQuery } from '@tanstack/react-query';
@@ -207,7 +207,7 @@ const CommunitySection = ({ currentUser }: { currentUser: any }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/paystack/initialize', {
+      const response = await api.post('/api/paystack/initialize', {
         email: currentUser.email,
         amount: 50, // Premium membership fee $50
         metadata: {
@@ -224,8 +224,8 @@ const CommunitySection = ({ currentUser }: { currentUser: any }) => {
         amount: 50 * 100,
         currency: 'USD',
         ref: data.reference,
-        callback: (response: { reference: string }) => {
-          axios.post(`http://localhost:5000/api/users/${currentUser.email}/premium`, {
+        callback: () => {
+          api.post(`/api/users/${currentUser.email}/premium`, {
             isPremium: true
           }).then(() => {
             toast.success('Welcome to the Premium Circle!');
@@ -380,7 +380,7 @@ export default function CustomerDashboard() {
   const { data: orders = [], isLoading: loading } = useQuery({
     queryKey: ['orders', user?.email],
     queryFn: async () => {
-      const response = await axios.get(`http://localhost:5000/api/orders/${user?.email}`);
+      const response = await api.get(`/api/orders/${user?.email}`);
       return response.data as Order[];
     },
     enabled: !!isAuthenticated && !!user?.email,
@@ -389,7 +389,7 @@ export default function CustomerDashboard() {
   const { data: currentUser, isLoading: userLoading } = useQuery({
     queryKey: ['user-profile', user?.email],
     queryFn: async () => {
-      const response = await axios.get(`http://localhost:5000/api/users/${user?.email?.trim()}`);
+      const response = await api.get(`/api/users/${user?.email?.trim()}`);
       return response.data;
     },
     enabled: !!isAuthenticated && !!user?.email,

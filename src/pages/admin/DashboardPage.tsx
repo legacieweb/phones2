@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DollarSign, ShoppingBag, Package, Users, Loader2 } from 'lucide-react';
-import axios from 'axios';
-import { mockProducts } from '../../data/mockData';
+import api from '../../api';
 import type { Order } from '../../types';
 
 export default function DashboardPage() {
@@ -13,8 +12,8 @@ export default function DashboardPage() {
     const fetchDashboardData = async () => {
       try {
         const [statsRes, ordersRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/admin/stats'),
-          axios.get('http://localhost:5000/api/admin/orders')
+          api.get('/api/admin/stats'),
+          api.get('/api/admin/orders')
         ]);
         setStats(statsRes.data);
         setRecentOrders(ordersRes.data.slice(0, 5));
